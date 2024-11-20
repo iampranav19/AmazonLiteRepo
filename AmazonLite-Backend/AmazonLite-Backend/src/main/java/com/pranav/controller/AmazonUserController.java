@@ -3,6 +3,7 @@ package com.pranav.controller;
 import com.pranav.dto.ApiResponse;
 import com.pranav.dto.UserDto;
 import com.pranav.service.UserServiceI;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,7 @@ public class AmazonUserController {
 
     // Endpoint to create a new user
     @PostMapping()
-    public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto)
+    public ResponseEntity<UserDto> createUser(@RequestBody @Valid UserDto userDto)
     {
         return new ResponseEntity<>(userService.createUser(userDto), HttpStatus.CREATED);
     }
