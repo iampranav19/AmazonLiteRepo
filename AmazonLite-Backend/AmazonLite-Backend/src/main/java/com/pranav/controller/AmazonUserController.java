@@ -1,7 +1,9 @@
 package com.pranav.controller;
 
 import com.pranav.dto.ApiResponse;
+import com.pranav.dto.PageableResponse;
 import com.pranav.dto.UserDto;
+import com.pranav.entity.User;
 import com.pranav.service.UserServiceI;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,10 +56,10 @@ public class AmazonUserController {
 
     // Endpoint to fetch the user using the Pagination
     @GetMapping("/pagination")
-    public ResponseEntity<List<UserDto>> getAllUsersByPages(@RequestParam(defaultValue = "0",required = false) int pageNumber,
-                                                            @RequestParam(defaultValue = "2",required = false) int pageSize,
-                                                            @RequestParam(defaultValue = "name",required = false) String sortBy,
-                                                            @RequestParam(defaultValue = "ASC",required = false) String sortDirection
+    public ResponseEntity<PageableResponse<UserDto>> getAllUsersByPages(@RequestParam(defaultValue = "0",required = false) int pageNumber,
+                                                                     @RequestParam(defaultValue = "2",required = false) int pageSize,
+                                                                     @RequestParam(defaultValue = "name",required = false) String sortBy,
+                                                                     @RequestParam(defaultValue = "ASC",required = false) String sortDirection
 
     )
     {

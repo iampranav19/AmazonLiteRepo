@@ -1,5 +1,6 @@
 package com.pranav.service;
 
+import com.pranav.dto.PageableResponse;
 import com.pranav.dto.UserDto;
 
 import java.util.List;
@@ -64,5 +65,5 @@ public interface UserServiceI {
      */
     public List<UserDto> searchUser(String keyword);
 
-    List<UserDto> getAllUsersPagination(int pageNumber, int pageSize, String sortBy, String sortDirection);
+    PageableResponse<UserDto> getAllUsersPagination(int pageNumber, int pageSize, String sortBy, String sortDirection);
 }

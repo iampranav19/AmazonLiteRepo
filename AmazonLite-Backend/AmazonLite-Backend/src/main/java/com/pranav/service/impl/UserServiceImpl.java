@@ -1,5 +1,6 @@
 package com.pranav.service.impl;
 
+import com.pranav.dto.PageableResponse;
 import com.pranav.dto.UserDto;
 import com.pranav.entity.User;
 import com.pranav.exception.ResourceNotFound;
@@ -110,12 +111,21 @@ public class UserServiceImpl implements UserServiceI {
     }
 
     @Override
-    public List<UserDto> getAllUsersPagination(int pageNumber, int pageSize, String sortBy, String sortDirection) {
+    public PageableResponse<UserDto> getAllUsersPagination(int pageNumber, int pageSize, String sortBy, String sortDirection) {
         Sort sort=(sortDirection.equalsIgnoreCase("asc") ? (Sort.by(sortBy).ascending()) :(Sort.by(sortBy).descending()));
         Pageable pageable= PageRequest.of(pageNumber, pageSize,sort);
         Page<User> page = userRepository.findAll(pageable);
         List<User> content = page.getContent();
-        return content.stream().map(this::convertToUserDto).collect(Collectors.toList());
+        // Creating custom response based on the content
+        PageableResponse<UserDto> pageableResponse = new PageableResponse<>();
+        pageableResponse.setContent(content.stream().map(this::convertToUserDto).collect(Collectors.toList()));
+        pageableResponse.setPageNumber(pageable.getPageNumber());
+        pageableResponse.setPageSize(pageable.getPageSize());
+        pageableResponse.setTotalElements(page.getTotalElements());
+        pageableResponse.setTotalPages(page.getTotalPages());
+        pageableResponse.setLastPage(page.isLast());
+        return pageableResponse;
+
     }
 
     /**
