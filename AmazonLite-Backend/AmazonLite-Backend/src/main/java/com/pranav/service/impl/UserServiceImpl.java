@@ -1,8 +1,8 @@
 package com.pranav.service.impl;
 
-import com.pranav.config.AmazonProjectConfig;
 import com.pranav.dto.UserDto;
 import com.pranav.entity.User;
+import com.pranav.exception.ResourceNotFound;
 import com.pranav.repositorty.UserRepository;
 import com.pranav.service.UserServiceI;
 import com.pranav.utility.AmazonJpaUtils;
@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,7 +45,7 @@ public class UserServiceImpl implements UserServiceI {
     public UserDto updateUser(UserDto user)
     {
         // update the user in the database using UserRepository
-        User existingUser = userRepository.findById(user.getUserId()).orElseThrow(()-> new RuntimeException("User not found for id " + user.getUserId()));
+        User existingUser = userRepository.findById(user.getUserId()).orElseThrow(()-> new ResourceNotFound("User not found for id " + user.getUserId()));
         if (existingUser!= null) {
             existingUser.setName(user.getName());
             existingUser.setEmail(user.getEmail());
@@ -63,7 +62,7 @@ public class UserServiceImpl implements UserServiceI {
     @Override
     public String deleteUser(String userId) {
         // Delete the user in the database using UserRepository
-        User user = userRepository.findById(userId).orElseThrow(()-> new RuntimeException("User not found for id "+userId));
+        User user = userRepository.findById(userId).orElseThrow(()-> new ResourceNotFound("User not found for id "+userId));
         if(user !=null) {
             userRepository.deleteById(userId);
         }
@@ -83,14 +82,14 @@ public class UserServiceImpl implements UserServiceI {
 
     @Override
     public UserDto getUserById(String userId) {
-        return convertToUserDto(userRepository.findById(userId).orElseThrow(()-> new RuntimeException("User not found for id "+userId)));
+        return convertToUserDto(userRepository.findById(userId).orElseThrow(()-> new ResourceNotFound("User not found for id "+userId)));
     }
 
     @Override
     public UserDto getUserByEmail(String email) {
         User user = userRepository.findByEmail(email);
         if(user == null) {
-            throw new RuntimeException("User not found for email " + email);
+            throw new ResourceNotFound("User not found for email " + email);
         }
         return convertToUserDto(user);
     }

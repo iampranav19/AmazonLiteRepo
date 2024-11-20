@@ -26,7 +26,7 @@ public class AmazonUserController {
 
     // Endpoint to create a new user
     @PostMapping()
-    public ResponseEntity<UserDto> createUser(@RequestBody @Valid UserDto userDto)
+    public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto)
     {
         return new ResponseEntity<>(userService.createUser(userDto), HttpStatus.CREATED);
     }
@@ -79,7 +79,6 @@ public class AmazonUserController {
     {
         return new ResponseEntity<>(userService.searchUser(keyword), HttpStatus.OK);
     }
-
 
 
 }
