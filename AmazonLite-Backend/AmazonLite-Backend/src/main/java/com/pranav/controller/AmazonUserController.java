@@ -72,6 +72,14 @@ public class AmazonUserController {
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
+    // Endpoint for the search results
+    @GetMapping("/search/{keyword}")
+    public ResponseEntity<List<UserDto>> searchUser(@PathVariable String keyword)
+    {
+        return new ResponseEntity<>(userService.searchUser(keyword), HttpStatus.OK);
+    }
+
+
 
 }
 
@@ -83,7 +91,7 @@ public class AmazonUserController {
         GET	http://localhost:8931/amazon/users/	Get all users
         PUT	http://localhost:8931/amazon/users/{id}	Update a user
         DELETE	http://localhost:8931/amazon/users/{id}	Delete a user
-
+        Search http://localhost:8931/amazon/users/search/{keyword}
 
       ************ Sample API JSON ********************************************
       * {
