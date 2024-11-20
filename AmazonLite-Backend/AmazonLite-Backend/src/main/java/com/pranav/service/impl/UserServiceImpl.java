@@ -1,14 +1,20 @@
 package com.pranav.service.impl;
 
+import com.pranav.config.AmazonProjectConfig;
 import com.pranav.dto.UserDto;
 import com.pranav.entity.User;
 import com.pranav.repositorty.UserRepository;
 import com.pranav.service.UserServiceI;
+import com.pranav.utility.AmazonJpaUtils;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
+@Service
 public class UserServiceImpl implements UserServiceI {
 
     // inject UserRepository using Constructor Injection
@@ -20,42 +26,83 @@ public class UserServiceImpl implements UserServiceI {
         this.userRepository = userRepository;
     }
 
+    @Autowired
+    private AmazonJpaUtils jpaUtils;
+
+    @Autowired
+    private ModelMapper mapper ;
+
     @Override
     public UserDto createUser(UserDto user) {
         // generate unique id in String format using UUID
-        user.setUserId(UUID.randomUUID().toString());
+        user.setUserId(jpaUtils.createId());
         User savedUser = convertToUser(user);
         userRepository.save(savedUser);
         return convertToUserDto(savedUser);
     }
 
+
     @Override
-    public UserDto updateUser(UserDto user) {
+    public UserDto updateUser(UserDto user)
+    {
+        // update the user in the database using UserRepository
+        User existingUser = userRepository.findById(user.getUserId()).orElseThrow(()-> new RuntimeException("User not found for id " + user.getUserId()));
+        if (existingUser!= null) {
+            existingUser.setName(user.getName());
+            existingUser.setEmail(user.getEmail());
+            existingUser.setPassword(user.getPassword());
+            existingUser.setGender(user.getGender());
+            existingUser.setAbout(user.getAbout());
+            existingUser.setImageName(user.getImageName());
+            userRepository.save(existingUser);
+            return convertToUserDto(existingUser);
+        }
         return null;
     }
 
     @Override
-    public void deleteUser(String userId) {
+    public String deleteUser(String userId) {
+        // Delete the user in the database using UserRepository
+        User user = userRepository.findById(userId).orElseThrow(()-> new RuntimeException("User not found for id "+userId));
+        if(user !=null) {
+            userRepository.deleteById(userId);
+        }
+        return "User deleted successfully for id "+userId;
 
     }
 
     @Override
     public List<UserDto> getAllUsers() {
+        // Retrieve all users from the database using UserRepository
+        List<User> users = userRepository.findAll();
+        if (!users.isEmpty()) {
+            return users.stream().map(this::convertToUserDto).collect(Collectors.toList());
+        }
         return null;
     }
 
     @Override
     public UserDto getUserById(String userId) {
-        return null;
+        return convertToUserDto(userRepository.findById(userId).orElseThrow(()-> new RuntimeException("User not found for id "+userId)));
     }
 
     @Override
     public UserDto getUserByEmail(String email) {
-        return null;
+        User user = userRepository.findByEmail(email);
+        if(user == null) {
+            throw new RuntimeException("User not found for email " + email);
+        }
+        return convertToUserDto(user);
     }
 
     @Override
     public List<UserDto> searchUser(String keyword) {
+        // Search for users based on the keyword in the database using UserRepository
+        List<User> users = userRepository.findByNameContaining(keyword);
+        if (!users.isEmpty()) {
+            return users.stream().map(this::convertToUserDto).collect(Collectors.toList());
+        }
+        // If no users found for the keyword, return null
         return null;
     }
 
@@ -88,6 +135,9 @@ public class UserServiceImpl implements UserServiceI {
      * @return the converted UserDto object
      */
     private UserDto convertToUserDto(User user) {
+
+        mapper.map(user, UserDto.class);
+
         if (user == null) {
             return null;
         }

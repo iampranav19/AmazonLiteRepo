@@ -32,7 +32,7 @@ public interface UserServiceI {
      *
      * @param userId The ID of the user to be deleted.
      */
-    public void deleteUser(String userId);
+    public String deleteUser(String userId);
 
     /**
      * Retrieves all users.

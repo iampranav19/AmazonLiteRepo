@@ -8,7 +8,7 @@ public class AmazonLiteBackendApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(AmazonLiteBackendApplication.class, args);
-		System.out.println("++++++++++++ Amazon Lite Backend Application Up and Running ..... ");
+		System.out.println("++++++++++++ Amazon Lite Backend Application Up and Running .....");
 	}
 
 
