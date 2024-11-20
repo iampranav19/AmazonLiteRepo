@@ -64,4 +64,6 @@ public interface UserServiceI {
      * @return A list of user objects that match the search criteria.
      */
     public List<UserDto> searchUser(String keyword);
+
+    List<UserDto> getAllUsersPagination(int pageNumber, int pageSize);
 }

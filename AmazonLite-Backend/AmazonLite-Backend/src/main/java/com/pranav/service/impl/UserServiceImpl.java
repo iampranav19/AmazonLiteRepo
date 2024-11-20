@@ -8,6 +8,9 @@ import com.pranav.service.UserServiceI;
 import com.pranav.utility.AmazonJpaUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -103,6 +106,14 @@ public class UserServiceImpl implements UserServiceI {
         }
         // If no users found for the keyword, return null
         return null;
+    }
+
+    @Override
+    public List<UserDto> getAllUsersPagination(int pageNumber, int pageSize) {
+        Pageable pageable= PageRequest.of(pageNumber, pageSize);
+        Page<User> page = userRepository.findAll(pageable);
+        List<User> content = page.getContent();
+        return content.stream().map(this::convertToUserDto).collect(Collectors.toList());
     }
 
     /**
