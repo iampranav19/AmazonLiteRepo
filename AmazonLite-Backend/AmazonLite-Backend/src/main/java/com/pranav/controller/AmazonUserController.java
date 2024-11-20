@@ -54,9 +54,14 @@ public class AmazonUserController {
 
     // Endpoint to fetch the user using the Pagination
     @GetMapping("/pagination")
-    public ResponseEntity<List<UserDto>> getAllUsersByPages(@RequestParam(defaultValue = "0",required = false) int pageNumber, @RequestParam(defaultValue = "2",required = false) int pageSize)
+    public ResponseEntity<List<UserDto>> getAllUsersByPages(@RequestParam(defaultValue = "0",required = false) int pageNumber,
+                                                            @RequestParam(defaultValue = "2",required = false) int pageSize,
+                                                            @RequestParam(defaultValue = "name",required = false) String sortBy,
+                                                            @RequestParam(defaultValue = "ASC",required = false) String sortDirection
+
+    )
     {
-        return new ResponseEntity<>(userService.getAllUsersPagination(pageNumber,pageSize), HttpStatus.OK);
+        return new ResponseEntity<>(userService.getAllUsersPagination(pageNumber,pageSize,sortBy,sortDirection), HttpStatus.OK);
     }
 
     // Endpoint to update the user

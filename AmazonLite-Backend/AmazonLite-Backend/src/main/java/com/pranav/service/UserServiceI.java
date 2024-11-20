@@ -1,7 +1,6 @@
 package com.pranav.service;
 
 import com.pranav.dto.UserDto;
-import com.pranav.entity.User;
 
 import java.util.List;
 
@@ -65,5 +64,5 @@ public interface UserServiceI {
      */
     public List<UserDto> searchUser(String keyword);
 
-    List<UserDto> getAllUsersPagination(int pageNumber, int pageSize);
+    List<UserDto> getAllUsersPagination(int pageNumber, int pageSize, String sortBy, String sortDirection);
 }
