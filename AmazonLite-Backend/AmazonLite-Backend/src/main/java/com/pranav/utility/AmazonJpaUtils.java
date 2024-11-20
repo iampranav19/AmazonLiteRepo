@@ -11,4 +11,5 @@ public class AmazonJpaUtils {
     {
         return UUID.randomUUID().toString().replace("-", "");
     }
+
 }
