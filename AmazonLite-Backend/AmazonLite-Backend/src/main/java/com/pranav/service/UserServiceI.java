@@ -3,6 +3,7 @@ package com.pranav.service;
 import com.pranav.dto.PageableResponse;
 import com.pranav.dto.UserDto;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -32,7 +33,7 @@ public interface UserServiceI {
      *
      * @param userId The ID of the user to be deleted.
      */
-    public String deleteUser(String userId);
+    public String deleteUser(String userId) throws IOException;
 
     /**
      * Retrieves all users.

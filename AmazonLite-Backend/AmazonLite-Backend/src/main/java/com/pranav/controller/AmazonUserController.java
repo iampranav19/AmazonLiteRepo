@@ -84,7 +84,7 @@ public class AmazonUserController {
 
     // Endpoint to delete the user
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse> deleteUser(@PathVariable String id) {
+    public ResponseEntity<ApiResponse> deleteUser(@PathVariable String id) throws IOException {
         String message = userService.deleteUser(id);
         ApiResponse apiResponse = ApiResponse.builder()
                 .message(message)

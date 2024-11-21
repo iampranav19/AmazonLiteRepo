@@ -9,17 +9,30 @@ import com.pranav.service.UserServiceI;
 import com.pranav.utility.AmazonJpaUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.io.IOException;
 @Service
 public class UserServiceImpl implements UserServiceI {
+
+    private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
     // inject UserRepository using Constructor Injection
     private UserRepository userRepository;
@@ -35,6 +48,9 @@ public class UserServiceImpl implements UserServiceI {
 
     @Autowired
     private ModelMapper mapper ;
+
+    @Value("${user.profile.image.path}")
+    private String imageUpdloadPath;
 
     @Override
     public UserDto createUser(UserDto user) {
@@ -65,14 +81,27 @@ public class UserServiceImpl implements UserServiceI {
     }
 
     @Override
-    public String deleteUser(String userId) {
+    public String deleteUser(String userId) throws IOException {
         // Delete the user in the database using UserRepository
-        User user = userRepository.findById(userId).orElseThrow(()-> new ResourceNotFound("User not found for id "+userId));
-        if(user !=null) {
-            userRepository.deleteById(userId);
-        }
-        return "User deleted successfully for id "+userId;
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFound("User not found for id " + userId));
 
+        // Delete the user's image if it exists
+        if (user.getImageName() != null && !user.getImageName().isEmpty()) {
+            try {
+                imageUpdloadPath=imageUpdloadPath+"/";
+                String fullPath = imageUpdloadPath + user.getImageName();
+                Path path = Paths.get(fullPath);
+                Files.deleteIfExists(path); // Use deleteIfExists instead of delete
+            } catch (IOException e) {
+                // Log the error but continue with user deletion
+                log.error("Failed to delete image file for user with id {}: {}", userId, e.getMessage());
+            }
+        }
+
+        // Delete the user from database
+        userRepository.deleteById(userId);
+        return "User deleted successfully for id " + userId;
     }
 
     @Override
