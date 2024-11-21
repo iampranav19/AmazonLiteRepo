@@ -4,18 +4,21 @@ import com.pranav.dto.ApiResponse;
 import com.pranav.dto.ImageResponse;
 import com.pranav.dto.PageableResponse;
 import com.pranav.dto.UserDto;
-import com.pranav.entity.User;
 import com.pranav.service.FileService;
 import com.pranav.service.UserServiceI;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 @RestController
@@ -105,7 +108,7 @@ public class AmazonUserController {
         String imageName = fileService.uploadFile(userImage, imageUpdloadPath);
 
         // Update user image name in database after uploading the image.
-        UserDto user=userService.getUserById(userId);
+        UserDto user = userService.getUserById(userId);
         user.setImageName(imageName);
         userService.updateUser(user);
 
@@ -115,8 +118,21 @@ public class AmazonUserController {
                 .success(true)
                 .status(HttpStatus.OK)
                 .build();
-        return new ResponseEntity<>(imageResponse,HttpStatus.CREATED);
+        return new ResponseEntity<>(imageResponse, HttpStatus.CREATED);
     }
+
+    // Endpoint to get user image
+    @GetMapping("/image/{userId}")
+    public void getUserImage(@PathVariable String userId, HttpServletResponse httpServletResponse) throws IOException
+    {
+        UserDto user = userService.getUserById(userId);
+        InputStream resource = fileService.getResource(imageUpdloadPath, user.getImageName());
+        httpServletResponse.setContentType(MediaType.IMAGE_JPEG_VALUE);
+        StreamUtils.copy(resource,httpServletResponse.getOutputStream());
+
+    }
+
+
 
 
 
