@@ -7,6 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "amazon_categories")
 @Data
@@ -30,5 +33,8 @@ public class Category {
 
     @Column(name = "cover_image_name", length = 200)
     private String coverImageName;
+
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    private List<Product> products=new ArrayList<>();
 
 }
